@@ -1,0 +1,171 @@
+.slider {
+  max-width: 235px;
+  position: absolute;
+  z-index: 99999;
+  top: 26px;
+  right: 35px;
+}
+.div_height {
+  height: 100vh;
+}
+.title {
+  font-size: 50px;
+  color: #000;
+  font-family: "Cookie", cursive;
+}
+.login-btn {
+  background-color: #4cb4f8;
+  border: none;
+}
+.login-btn:hover,
+.login-btn:focus,
+.login-btn:active,
+.login-btn:focus-visible {
+  background-color: #5dbefd !important;
+  box-shadow: none;
+}
+.mb-0 {
+  margin-bottom: 0;
+}
+.Toastify__toast-container--top-right {
+  width: 400px !important;
+}
+.login-hint {
+  font-size: 14px;
+  font-weight: 400;
+  color: #000;
+  text-align: center;
+}
+.login-fb {
+  background-color: #0095f6;
+  border: none;
+}
+.login-div {
+  border: 1px solid #dbdbdb;
+  padding: 30px;
+  margin-bottom: 10px;
+}
+.login-div .form-control {
+  background-color: #fafafa;
+  font-size: 12px;
+}
+.login-div button {
+  color: #fff;
+  font-weight: 700;
+}
+.login-div .option {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #bdbdbd;
+  line-height: 0.1em;
+  margin: 10px 0 20px;
+}
+.login-div .option span {
+  background: #fff;
+  padding: 0 10px;
+}
+.fb-login-logo {
+  width: 20px;
+}
+.fb-text {
+  color: #385185;
+  font-size: 14px;
+  font-weight: 600;
+}
+.forgot {
+  color: #385185;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+}
+.sign-up {
+  text-align: center;
+  border: 1px solid #dbdbdb;
+  padding: 20px;
+  margin-top: 15px;
+}
+.sign-up a {
+  text-decoration: none;
+  font-weight: 700;
+}
+.sign-up p {
+  font-size: 14px;
+  margin: 0;
+}
+.get-app {
+  font-size: 14px;
+  font-weight: 400;
+  text-align: center;
+  margin-top: 20px;
+}
+.app img {
+  max-width: 136px;
+  margin: 0px 3px;
+}
+.footer-links li {
+  list-style-type: none;
+  display: inline-block;
+}
+.font-400 {
+  font-weight: 500;
+}
+.footer-links li a {
+  padding: 0px 10px;
+  text-decoration: none;
+  color: #8e8e8e;
+  font-size: 12px;
+}
+.mobile-slider {
+  background: url("./img/mobile_bg.png");
+  min-height: 600px;
+  background-size: cover;
+}
+.bg-mobile-slider {
+  position: relative;
+}
+.carousel-control-prev,
+.carousel-control-next,
+.carousel-indicators {
+  display: none;
+}
+.label-text {
+  text-align: left !important;
+  color: #555;
+  margin-top: 10px;
+}
+.hint-text {
+  color: #8e8e8e;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+  display: block;
+  line-height: 20px;
+  margin-bottom: 20px;
+}
+.small-hint {
+  color: #8e8e8e;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 10px;
+  display: block;
+}
+.small-hint a {
+  color: #00376b;
+  text-decoration: none;
+  font-weight: 500;
+}
+.registration-form {
+  width: 30%;
+  margin-top: 30px;
+}
+@media screen and (max-width: 1024px) {
+  .bg-mobile-slider {
+    display: none;
+  }
+  .login-div,
+  .sign-up {
+    border: none;
+  }
+}

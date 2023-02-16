@@ -101,7 +101,7 @@ export const Register = () => {
                   type="text"
                   className="form-control"
                   placeholder="Enter Username"
-                  autoComplete="off"
+                  autoComplete="new-password"
                   name="username"
                   value={username || ""}
                   onChange={(e) => setUsername(e.target.value)}
@@ -112,6 +112,7 @@ export const Register = () => {
                   className="form-control"
                   placeholder="Enter Password"
                   name="password"
+                  autoComplete="new-password"
                   value={password || ""}
                   onChange={(e) => setPassword(e.target.value)}
                 />

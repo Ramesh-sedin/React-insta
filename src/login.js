@@ -6,11 +6,14 @@ import Form from "react-bootstrap/Form";
 import fb from "./img/fb1.png";
 import ios from "./img/mac_store.png";
 import android from "./img/android_store.png";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 export const Login = () => {
   const navigate = useNavigate();
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
   const [validName, setvalidName] = useState(false);
   const [inputs, setInputs] = useState({
     username: "",
@@ -35,8 +38,9 @@ export const Login = () => {
           if (Object.keys(res).length === 0) {
             toast.error("Enter valid credentials");
           } else {
-            if (inputs.username === inputs.userpassword) {
+            if (res.password === inputs.userpassword) {
               console.log("success");
+              sessionStorage.setItem("username", inputs.username);
               navigate("../home");
             } else {
               toast.error("Enter valid password");
@@ -62,7 +66,7 @@ export const Login = () => {
           <Col lg={3} sm={8} xs={12}>
             <div className="login-div">
               <p className="mb-4 text-center title">Instagram</p>
-              <Form>
+              <Form autoComplete="new-password">
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Control
                     type="email"
@@ -70,6 +74,7 @@ export const Login = () => {
                     value={inputs.username || ""}
                     onChange={changeEvent}
                     name="username"
+                    autoComplete="new-password"
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -77,6 +82,7 @@ export const Login = () => {
                     type="password"
                     name="userpassword"
                     placeholder="Password"
+                    autoComplete="new-password"
                     onChange={changeEvent}
                     value={inputs.userpassword || ""}
                   />

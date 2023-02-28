@@ -66,15 +66,15 @@ export const Login = () => {
           <Col lg={3} sm={8} xs={12}>
             <div className="login-div">
               <p className="mb-4 text-center title">Instagram</p>
-              <Form autoComplete="new-password">
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form autoComplete="off">
+                <Form.Group className="mb-3">
                   <Form.Control
-                    type="email"
+                    type="search"
                     placeholder="Phone number, username or email address"
-                    value={inputs.username || ""}
+                    value={inputs.username}
                     onChange={changeEvent}
                     name="username"
-                    autoComplete="new-password"
+                    autoComplete="off"
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -84,7 +84,7 @@ export const Login = () => {
                     placeholder="Password"
                     autoComplete="new-password"
                     onChange={changeEvent}
-                    value={inputs.userpassword || ""}
+                    value={inputs.userpassword}
                   />
                 </Form.Group>
                 <div className="d-grid gap-2">

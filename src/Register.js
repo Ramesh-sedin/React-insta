@@ -25,6 +25,15 @@ export const Register = () => {
       isValid = false;
       toast.error(errorMessage + " password");
     }
+    if (!isValid) {
+      toast.warning("Enter valid cred");
+    } else {
+      if (/^(?:\d{10}|\w+@\w+\.\w{2,3})$/.test(id)) {
+      } else {
+        isValid = false;
+        toast.warning("Enter valid email or mobile no");
+      }
+    }
     return isValid;
   };
   const submitForm = (e) => {

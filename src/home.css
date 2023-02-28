@@ -1,0 +1,150 @@
+.sidebar-title {
+  font-size: 36px !important;
+}
+.sidebar {
+  padding: 10px 50px 10px 20px;
+  border-right: 1px solid #d5d5d5;
+  position: fixed;
+  height: 100%;
+  width: 225px;
+}
+.sidebar-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+.sidebar-content ul li a {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  padding: 12px 5px;
+  display: block;
+}
+.end-link {
+  text-decoration: none;
+  color: #000;
+  font-weight: 500;
+  padding: 5px;
+  position: absolute;
+  bottom: 0;
+}
+.sidebar-content ul li i {
+  margin-right: 4px;
+}
+.profile-image {
+  width: 30px;
+  margin-right: 10px;
+  vertical-align: initial;
+}
+.profile-name p {
+  margin: 0;
+  font-weight: 500;
+}
+.profile-name span {
+  color: #989898;
+  font-size: 14px;
+}
+.profile-name {
+  line-height: 16px;
+}
+.switch-acc {
+  display: inline-block;
+  float: right;
+}
+.my-profile div {
+  display: inline-block;
+}
+.my-profile {
+  margin: 15px 0px;
+}
+.switch-acc a {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+}
+.other-info {
+  width: 285px;
+  margin-top: 20px;
+}
+.suggestions a {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: #000;
+}
+.suggestions p,
+.copyrights {
+  color: #989898;
+  margin: 0;
+  font-weight: 700;
+}
+.copyrights {
+  display: block;
+  font-size: 12px;
+}
+.suggestions {
+  margin-top: 30px;
+  align-items: center;
+}
+.other-links {
+  width: 285px;
+}
+.other-links ul {
+  padding: 0;
+  list-style-type: none;
+  display: inline-block;
+}
+.other-links ul li {
+  float: left;
+  padding: 0px 7px 0px 0px;
+}
+.other-links ul li a {
+  font-size: 12px;
+  text-decoration: none;
+  color: #989898;
+}
+.other-links ul li a::after {
+  content: "\00B7";
+}
+.user_status {
+}
+.user_status img,
+.status-slider img {
+  max-width: 100%;
+  border-radius: 50%;
+  width: 85px !important;
+  margin: 0px auto;
+  display: block;
+  border: double 6px #fff;
+  border-radius: 50%;
+  background-image: linear-gradient(white, white),
+    linear-gradient(to right, #ffc000, #e00b50);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+  height: 85px;
+  object-fit: cover;
+}
+.feed-section {
+  margin: 0px auto;
+  display: block;
+  width: 50%;
+}
+.react-multi-carousel-item {
+  max-width: 100% !important;
+}
+.react-multiple-carousel__arrow::before {
+  color: #000 !important;
+  font-size: 12px !important;
+}
+.react-multiple-carousel__arrow {
+  background-color: #fff !important;
+  min-height: 20px !important;
+  min-width: 20px !important;
+}
+@media only screen and (max-width: 1024px) {
+  .sidebar,
+  .other-info,
+  .other-links,
+  .copyrights {
+    display: none;
+  }
+}

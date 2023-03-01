@@ -4,6 +4,10 @@ import android from "./img/android_store.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import { auth } from "./firebase";
+
 export const Register = () => {
   const navigate = useNavigate();
   const isValidate = () => {
@@ -38,21 +42,14 @@ export const Register = () => {
   };
   const submitForm = (e) => {
     e.preventDefault();
-    const obj = { id, fname, username, password };
-    if (isValidate()) {
-      fetch("http://localhost:8000/users", {
-        method: "post",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(obj),
-      })
-        .then((res) => {
-          toast.warning("Succesffully registered");
-          navigate("../login");
-        })
-        .catch((err) => {
-          console.log(err.message);
+    auth
+      .createUserWithEmailAndPassword(username, password)
+      .then((authUser) => {
+        return authUser.user.updateProfile({
+          displayName: username,
         });
-    }
+      })
+      .catch((e) => console.log(e.message));
   };
   // const [inputs, setInputs] = useState({
   //   id: "",

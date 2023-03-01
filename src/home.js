@@ -4,6 +4,8 @@ import user from "./img/user.png";
 import "./home.css";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import firebase from "firebase/compat/app";
+import { auth } from "./firebase";
 export const Home = () => {
   const responsive = {
     superLargeDesktop: {
@@ -24,6 +26,7 @@ export const Home = () => {
       items: 1,
     },
   };
+  const [User, setUser] = useState(null);
   const navigate = useNavigate();
   const [pictures, setPictures] = useState([]);
   fetch("http://localhost:8001/images")
@@ -37,11 +40,19 @@ export const Home = () => {
       console.log(err.message);
     });
   useEffect(() => {
-    let username = sessionStorage.getItem("username");
-    if (username === "" || username === null) {
+    const validateEmail = sessionStorage.getItem("username");
+    if (validateEmail == "" || validateEmail == null) {
       navigate("../login");
     }
   }, []);
+  const logout = () => {
+    firebase
+      .auth()
+      .signOut()
+      .then((ress) => {
+        navigate("../login");
+      });
+  };
   return (
     <div>
       <div className="container-fluid">
@@ -101,6 +112,11 @@ export const Home = () => {
                 <a href="#" className="end-link">
                   <i className="fa fa-bars" aria-hidden="true"></i> More
                 </a>
+                <div>
+                  <a href="#" className="logout" onClick={logout}>
+                    <i className="fa fa-bars" aria-hidden="true"></i> More
+                  </a>
+                </div>
               </div>
             </div>
           </div>

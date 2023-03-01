@@ -9,12 +9,14 @@ import android from "./img/android_store.png";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import { auth } from "./firebase";
+
 export const Login = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    sessionStorage.clear();
-  }, []);
   const [validName, setvalidName] = useState(false);
+  const [user, setUser] = useState(null);
   const [inputs, setInputs] = useState({
     username: "",
     userpassword: "",
@@ -24,34 +26,45 @@ export const Login = () => {
     const val = e.target.value;
     setInputs((value) => ({ ...value, [name]: val }));
   };
-  const formSubmit = () => {
+  const formSubmit = (e) => {
+    auth.onAuthStateChanged((usersss) => {
+      const emailID = usersss.email;
+      sessionStorage.setItem("username", emailID);
+      const validate = sessionStorage.getItem("username");
+      if (validate == "" || validate == null) {
+        navigate("../login");
+      } else {
+      }
+    });
     if (inputs.username == "" || inputs.userpassword == "") {
       setvalidName(true);
     } else {
       setvalidName(false);
-      fetch("http://localhost:8000/users/" + inputs.username)
-        .then((result) => {
-          return result.json();
-        })
+      e.preventDefault();
+      auth
+        .signInWithEmailAndPassword(inputs.username, inputs.userpassword)
         .then((res) => {
-          console.log(res);
-          if (Object.keys(res).length === 0) {
-            toast.error("Enter valid credentials");
-          } else {
-            if (res.password === inputs.userpassword) {
-              console.log("success");
-              sessionStorage.setItem("username", inputs.username);
-              navigate("../home");
-            } else {
-              toast.error("Enter valid password");
-            }
-          }
+          navigate("../home");
         })
-        .catch((err) => {
-          toast.warning(err.message);
-        });
+        .catch((e) => console.log(e.message));
     }
   };
+
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((authUser) => {
+  //     if (authUser) {
+  //       setUser(authUser);
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
   return (
     <div className="Home">
       <div className="container">

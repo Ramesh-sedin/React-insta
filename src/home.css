@@ -105,7 +105,8 @@
 .other-links ul li a::after {
   content: "\00B7";
 }
-.user_status {
+.img-details {
+  margin-bottom: 10px;
 }
 .user_status img,
 .status-slider img {
@@ -124,9 +125,12 @@
   object-fit: cover;
 }
 .feed-section {
-  margin: 0px auto;
+  margin: 20px auto;
   display: block;
   width: 50%;
+}
+.progress {
+  width: 100%;
 }
 .react-multi-carousel-item {
   max-width: 100% !important;
@@ -139,6 +143,57 @@
   background-color: #fff !important;
   min-height: 20px !important;
   min-width: 20px !important;
+}
+.image-frame {
+  margin: 10px 0px 30px 0px;
+}
+.image-frame p {
+  margin: 0;
+}
+.image-frame img {
+  width: 100%;
+}
+.actions {
+  margin: 10px 0px;
+}
+.actions i {
+  font-size: 20px;
+  padding-right: 10px;
+}
+.caption {
+  padding-left: 10px;
+}
+.comment-field {
+  border-bottom: 1px solid #d0d0d0;
+}
+.comment-field .form-control {
+  border: none;
+  border-radius: 0 !important;
+  padding: 10px 4px;
+  width: 90%;
+}
+.comment-field label {
+  padding: 20px 0px;
+  color: #919191;
+}
+.comment-field .form-control:focus {
+  box-shadow: none;
+}
+.actions i:last-child {
+  padding-right: 0px !important;
+}
+.avatar {
+  width: 30px !important;
+  height: 30px !important;
+  margin-right: 20px;
+}
+.add-link {
+  position: absolute;
+  top: 20px;
+  right: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  color: #4590ff !important;
 }
 @media only screen and (max-width: 1024px) {
   .sidebar,

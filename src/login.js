@@ -27,12 +27,12 @@ export const Login = () => {
     setInputs((value) => ({ ...value, [name]: val }));
   };
   const formSubmit = (e) => {
-    auth.onAuthStateChanged((usersss) => {
-      const emailID = usersss.email;
+    auth.onAuthStateChanged((User) => {
+      const emailID = User.email;
       sessionStorage.setItem("username", emailID);
       const validate = sessionStorage.getItem("username");
       if (validate == "" || validate == null) {
-        navigate("../login");
+        navigate("../register");
       } else {
       }
     });
@@ -46,7 +46,7 @@ export const Login = () => {
         .then((res) => {
           navigate("../home");
         })
-        .catch((e) => console.log(e.message));
+        .catch((e) => toast.error("Enter Valid Credentials"));
     }
   };
 

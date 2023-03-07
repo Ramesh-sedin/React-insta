@@ -45,27 +45,18 @@ export const Register = () => {
     auth
       .createUserWithEmailAndPassword(username, password)
       .then((authUser) => {
+        toast.success("Successfully registered");
+        navigate("../login");
         return authUser.user.updateProfile({
-          displayName: username,
+          displayName: fname,
         });
       })
-      .catch((e) => console.log(e.message));
+      .catch((e) => toast.error(e.message));
   };
-  // const [inputs, setInputs] = useState({
-  //   id: "",
-  //   fname: "",
-  //   username: "",
-  //   password: "",
-  // });
   const [id, setId] = useState("");
   const [fname, setFname] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const changeEvent = (e) => {
-  //   const name = e.target.name;
-  //   const value = e.target.value;
-  //   setInputs((val) => ({ ...val, [name]: value }));
-  // };
   return (
     <div>
       <ToastContainer />

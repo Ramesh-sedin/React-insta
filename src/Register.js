@@ -7,8 +7,14 @@ import { ToastContainer, toast } from "react-toastify";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import { auth } from "./firebase";
+import { Home } from "./home";
 
 export const Register = () => {
+  const [check, setCheck] = useState("hai");
+  const [id, setId] = useState("");
+  const [fname, setFname] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const isValidate = () => {
     let isValid = true;
@@ -53,10 +59,7 @@ export const Register = () => {
       })
       .catch((e) => toast.error(e.message));
   };
-  const [id, setId] = useState("");
-  const [fname, setFname] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+
   return (
     <div>
       <ToastContainer />

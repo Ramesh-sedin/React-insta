@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { json, useNavigate } from "react-router-dom";
-import user from "./img/user.png";
+import proPic from "./img/user.png";
 import "./home.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -14,6 +14,7 @@ import "firebase/compat/firestore";
 import { db, storage } from "./firebase";
 import { auth } from "./firebase";
 import { ToastContainer, toast } from "react-toastify";
+import { UserPost } from "./userPost";
 
 export const Home = () => {
   const [show, setShow] = useState(false);
@@ -24,7 +25,8 @@ export const Home = () => {
   const [display, setDisplay] = useState([]);
   const [addComment, setAddComment] = useState("");
   const [postLink, setPostLink] = useState(false);
-  // const [profileUser, setProfileUser] = useState("");
+  const [imageID, setImageID] = useState("");
+  const [user, setUser] = useState(null);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -32,11 +34,11 @@ export const Home = () => {
     superLargeDesktop: {
       // the naming can be any, depends on you.
       breakpoint: { max: 4000, min: 3000 },
-      items: 5,
+      items: 8,
     },
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 5,
+      items: 8,
     },
     tablet: {
       breakpoint: { max: 1024, min: 464 },
@@ -50,6 +52,18 @@ export const Home = () => {
   const navigate = useNavigate();
   const [pictures, setPictures] = useState([]);
   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        setUser(authUser);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  useEffect(() => {
     fetch("http://localhost:2001/images")
       .then((res) => {
         return res.json();
@@ -62,25 +76,30 @@ export const Home = () => {
       });
   }, []);
 
-  const userName = sessionStorage.getItem("username");
+  // const userName = sessionStorage.getItem("username");
 
   useEffect(() => {
-    if (userName == "" || userName == null) {
-      navigate("../login");
-    }
+    // if (userName == "" || userName == null) {
+    //   navigate("../login");
+    // }
     auth.onAuthStateChanged((getDetail) => {
-      console.log(getDetail);
       setDisplay(getDetail.displayName);
     });
   }, []);
+
   useEffect(() => {
     db.collection("posts")
       .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) => {
-        const data = snapshot.docs.map((doc) => doc.data());
-        setPosts(data);
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            post: doc.data(),
+          }))
+        );
       });
   }, []);
+
   const logout = () => {
     firebase
       .auth()
@@ -88,18 +107,6 @@ export const Home = () => {
       .then((ress) => {
         navigate("../login");
       });
-  };
-  const handleKeyPress = (event) => {
-    if (event.key) {
-      if (addComment == "" || addComment == null) {
-        setPostLink(false);
-      } else {
-        setPostLink(true);
-      }
-    }
-  };
-  const commentChange = (e) => {
-    setAddComment(e.target.value);
   };
   const imageUpload = (e) => {
     if (e.target.files[0]) {
@@ -130,7 +137,7 @@ export const Home = () => {
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               caption: caption,
               imageURL: url,
-              userName: userName,
+              userName: display,
             });
             toast.success("Your post added successfully");
             setShow(false);
@@ -246,80 +253,46 @@ export const Home = () => {
                   </Button>
                 </Modal.Footer>
               </Modal>
+              <Carousel
+                className="status-slider"
+                swipeable={false}
+                draggable={false}
+                showDots={false}
+                responsive={responsive}
+                ssr={true} // means to render carousel on server-side.
+                infinite={true}
+                autoPlay={false}
+                autoPlaySpeed={3000}
+                keyBoardControl={true}
+                customTransition="transform 300ms ease-in-out"
+                transitionDuration={500}
+                slidesToSlide={3}
+                containerClass="carousel-container"
+                removeArrowOnDeviceType={["tablet", "mobile"]}
+                deviceType={""}
+                dotListClass="custom-dot-list-style"
+                itemClass="carousel-item-padding-40-px"
+              >
+                {pictures.map((result) => (
+                  <img
+                    src={JSON.stringify(result.thumbnailUrl).replace(
+                      /^["'](.+(?=["']$))["']$/,
+                      "$1"
+                    )}
+                  />
+                ))}
+              </Carousel>
               <div className="feed-section">
-                <Carousel
-                  className="status-slider"
-                  swipeable={false}
-                  draggable={false}
-                  showDots={false}
-                  responsive={responsive}
-                  ssr={true} // means to render carousel on server-side.
-                  infinite={true}
-                  autoPlay={false}
-                  autoPlaySpeed={3000}
-                  keyBoardControl={true}
-                  customTransition="transform 300ms ease-in-out"
-                  transitionDuration={500}
-                  slidesToSlide={3}
-                  containerClass="carousel-container"
-                  removeArrowOnDeviceType={["tablet", "mobile"]}
-                  deviceType={""}
-                  dotListClass="custom-dot-list-style"
-                  itemClass="carousel-item-padding-40-px"
-                >
-                  {pictures.map((result) => (
-                    <img
-                      src={JSON.stringify(result.thumbnailUrl).replace(
-                        /^["'](.+(?=["']$))["']$/,
-                        "$1"
-                      )}
-                    />
-                  ))}
-                </Carousel>
-
                 <div className="timeline">
-                  {posts.map((datas) => (
-                    <div className="image-frame">
-                      <div className="img-details d-flex align-items-center">
-                        <img src={user} alt="avatar" className="avatar" />
-                        <p>{display}</p>
-                      </div>
-                      <img src={datas.imageURL} />
-                      <div className="actions d-flex justify-content-between">
-                        <div>
-                          <i className="fa fa-heart-o" aria-hidden="true"></i>
-                          <i className="fa fa-comment-o" aria-hidden="true"></i>
-                          <i
-                            className="fa fa-paper-plane-o"
-                            aria-hidden="true"
-                          ></i>
-                        </div>
-                        <div>
-                          <i
-                            className="fa fa-bookmark-o"
-                            aria-hidden="true"
-                          ></i>
-                        </div>
-                      </div>
-                      <FloatingLabel
-                        controlId="floatingTextarea"
-                        label="Add a comment..."
-                        className="mt-3 comment-field"
-                      >
-                        <Form.Control
-                          type="text"
-                          placeholder="Add comment here"
-                          value={addComment}
-                          onChange={commentChange}
-                          onKeyUp={handleKeyPress}
-                        />
-                        {postLink ? (
-                          <a href="#" className="add-link">
-                            post
-                          </a>
-                        ) : null}
-                      </FloatingLabel>
-                    </div>
+                  {posts.map(({ id, post }) => (
+                    <UserPost
+                      key={id}
+                      imageURL={post.imageURL}
+                      caption={post.caption}
+                      user={user}
+                      userName={post.userName}
+                      postID={id}
+                    />
                   ))}
                 </div>
               </div>
@@ -330,7 +303,7 @@ export const Home = () => {
                   <div>
                     <img
                       className="profile-image"
-                      src={user}
+                      src={proPic}
                       alt="user_image"
                     />
                   </div>
@@ -350,7 +323,7 @@ export const Home = () => {
                   <div>
                     <img
                       className="profile-image"
-                      src={user}
+                      src={proPic}
                       alt="user_image"
                     />
                   </div>
@@ -366,7 +339,7 @@ export const Home = () => {
                   <div>
                     <img
                       className="profile-image"
-                      src={user}
+                      src={proPic}
                       alt="user_image"
                     />
                   </div>
@@ -382,7 +355,7 @@ export const Home = () => {
                   <div>
                     <img
                       className="profile-image"
-                      src={user}
+                      src={proPic}
                       alt="user_image"
                     />
                   </div>

@@ -16,7 +16,6 @@ import { auth } from "./firebase";
 export const Login = () => {
   const navigate = useNavigate();
   const [validName, setvalidName] = useState(false);
-  const [user, setUser] = useState(null);
   const [inputs, setInputs] = useState({
     username: "",
     userpassword: "",
@@ -27,15 +26,6 @@ export const Login = () => {
     setInputs((value) => ({ ...value, [name]: val }));
   };
   const formSubmit = (e) => {
-    auth.onAuthStateChanged((User) => {
-      const emailID = User.email;
-      sessionStorage.setItem("username", emailID);
-      const validate = sessionStorage.getItem("username");
-      if (validate == "" || validate == null) {
-        navigate("../register");
-      } else {
-      }
-    });
     if (inputs.username == "" || inputs.userpassword == "") {
       setvalidName(true);
     } else {
@@ -50,21 +40,10 @@ export const Login = () => {
     }
   };
 
-  useEffect(() => {
-    sessionStorage.clear();
-  }, []);
   // useEffect(() => {
-  //   const unsubscribe = auth.onAuthStateChanged((authUser) => {
-  //     if (authUser) {
-  //       setUser(authUser);
-  //     } else {
-  //       setUser(null);
-  //     }
-  //   });
-  //   return () => {
-  //     unsubscribe();
-  //   };
+  //   sessionStorage.clear();
   // }, []);
+
   return (
     <div className="Home">
       <div className="container">

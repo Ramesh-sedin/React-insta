@@ -15,9 +15,11 @@ import { db, storage } from "./firebase";
 import { auth } from "./firebase";
 import { ToastContainer, toast } from "react-toastify";
 import { UserPost } from "./userPost";
+import { upload } from "./firebase";
 
 export const Home = () => {
   const [show, setShow] = useState(false);
+  const [uploadShow, setUploadShow] = useState(false);
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState("");
   const [progress, setProgress] = useState(0);
@@ -27,7 +29,13 @@ export const Home = () => {
   const [postLink, setPostLink] = useState(false);
   const [imageID, setImageID] = useState("");
   const [user, setUser] = useState(null);
+  const [photoURL, setPhotoURL] = useState(
+    "https://winaero.com/blog/wp-content/uploads/2015/05/windows-10-user-account-login-icon.png"
+  );
+  const [profilePicture, setProfilePicture] = useState();
 
+  const uploadhandleClose = () => setUploadShow(false);
+  const uploadhandleShow = () => setUploadShow(true);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const responsive = {
@@ -147,6 +155,28 @@ export const Home = () => {
       }
     );
   };
+
+  // profile pic upload
+  const [currentUser, setCurrentUser] = useState("");
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      setCurrentUser(authUser);
+    });
+    if (currentUser && currentUser.photoURL) {
+      setPhotoURL(currentUser.photoURL);
+    }
+  }, [currentUser]);
+  const propicChange = (e) => {
+    if (e.target.files[0]) {
+      setProfilePicture(e.target.files[0]);
+    }
+  };
+  const uploadPic = () => {
+    upload(profilePicture, currentUser, setLoading, uploadShow);
+    setUploadShow(false);
+  };
+  // profile pic upload
   return (
     <div>
       <ToastContainer />
@@ -206,11 +236,12 @@ export const Home = () => {
                       </a>
                     </li>
                     <li>
-                      <a href="#">
-                        <i
-                          className="fa fa-user-circle-o"
-                          aria-hidden="true"
-                        ></i>
+                      <a href="#" onClick={uploadhandleShow}>
+                        <img
+                          src={photoURL}
+                          alt=""
+                          className="profile-display-picture"
+                        />
                         Profile
                       </a>
                     </li>
@@ -222,6 +253,35 @@ export const Home = () => {
               </div>
             </div>
             <div className="col-md-7">
+              <Modal show={uploadShow} onHide={uploadhandleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Upload profile picture</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="profile-pic">
+                    <input type="file" onChange={propicChange} />
+                    <div>
+                      <br />
+                      {/* <p style={{ margin: 0 }}>Preview:</p>
+                      <img
+                        src={photoURL}
+                        alt="test"
+                        className="profile-upload-img"
+                      /> */}
+                    </div>
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <button
+                    disabled={loading || !profilePicture}
+                    href="#"
+                    className="btn btn-primary"
+                    onClick={uploadPic}
+                  >
+                    Upload
+                  </button>
+                </Modal.Footer>
+              </Modal>
               <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Create new post</Modal.Title>
@@ -303,7 +363,7 @@ export const Home = () => {
                   <div>
                     <img
                       className="profile-image"
-                      src={proPic}
+                      src={photoURL}
                       alt="user_image"
                     />
                   </div>

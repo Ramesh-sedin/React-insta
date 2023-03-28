@@ -4,6 +4,10 @@ import android from "./img/android_store.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import { auth } from "./firebase";
+
 export const Register = () => {
   const navigate = useNavigate();
   const isValidate = () => {
@@ -25,41 +29,34 @@ export const Register = () => {
       isValid = false;
       toast.error(errorMessage + " password");
     }
+    if (!isValid) {
+      toast.warning("Enter valid cred");
+    } else {
+      if (/^(?:\d{10}|\w+@\w+\.\w{2,3})$/.test(id)) {
+      } else {
+        isValid = false;
+        toast.warning("Enter valid email or mobile no");
+      }
+    }
     return isValid;
   };
   const submitForm = (e) => {
     e.preventDefault();
-    const obj = { id, fname, username, password };
-    if (isValidate()) {
-      fetch("http://localhost:8000/users", {
-        method: "post",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(obj),
-      })
-        .then((res) => {
-          toast.warning("Succesffully registered");
-          navigate("../login");
-        })
-        .catch((err) => {
-          console.log(err.message);
+    auth
+      .createUserWithEmailAndPassword(username, password)
+      .then((authUser) => {
+        toast.success("Successfully registered");
+        navigate("../login");
+        return authUser.user.updateProfile({
+          displayName: fname,
         });
-    }
+      })
+      .catch((e) => toast.error(e.message));
   };
-  // const [inputs, setInputs] = useState({
-  //   id: "",
-  //   fname: "",
-  //   username: "",
-  //   password: "",
-  // });
   const [id, setId] = useState("");
   const [fname, setFname] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  // const changeEvent = (e) => {
-  //   const name = e.target.name;
-  //   const value = e.target.value;
-  //   setInputs((val) => ({ ...val, [name]: value }));
-  // };
   return (
     <div>
       <ToastContainer />

@@ -1,22 +1,16 @@
 {
   "users": [
     {
-      "id": "test",
-      "fname": "test",
-      "username": "test",
-      "password": "test"
+      "id": "7373225667",
+      "fname": "Ramesh",
+      "username": "Ramesh",
+      "password": "Ramesh@123"
     },
     {
-      "id": "random",
-      "fname": "random",
-      "username": "random",
-      "password": "random"
-    },
-    {
-      "id": "1234567890",
-      "fname": "check",
-      "username": "check@gmail.com",
-      "password": "check123"
+      "id": "ramesh@sedin.com",
+      "fname": "Ramesh ",
+      "username": "Ramesh kumar",
+      "password": "Ramesh123"
     }
   ]
 }

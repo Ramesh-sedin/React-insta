@@ -9,12 +9,14 @@ import android from "./img/android_store.png";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import { auth } from "./firebase";
+
 export const Login = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    sessionStorage.clear();
-  }, []);
   const [validName, setvalidName] = useState(false);
+  const [user, setUser] = useState(null);
   const [inputs, setInputs] = useState({
     username: "",
     userpassword: "",
@@ -24,34 +26,45 @@ export const Login = () => {
     const val = e.target.value;
     setInputs((value) => ({ ...value, [name]: val }));
   };
-  const formSubmit = () => {
+  const formSubmit = (e) => {
+    auth.onAuthStateChanged((User) => {
+      const emailID = User.email;
+      sessionStorage.setItem("username", emailID);
+      const validate = sessionStorage.getItem("username");
+      if (validate == "" || validate == null) {
+        navigate("../register");
+      } else {
+      }
+    });
     if (inputs.username == "" || inputs.userpassword == "") {
       setvalidName(true);
     } else {
       setvalidName(false);
-      fetch("http://localhost:8000/users/" + inputs.username)
-        .then((result) => {
-          return result.json();
-        })
+      e.preventDefault();
+      auth
+        .signInWithEmailAndPassword(inputs.username, inputs.userpassword)
         .then((res) => {
-          console.log(res);
-          if (Object.keys(res).length === 0) {
-            toast.error("Enter valid credentials");
-          } else {
-            if (res.password === inputs.userpassword) {
-              console.log("success");
-              sessionStorage.setItem("username", inputs.username);
-              navigate("../home");
-            } else {
-              toast.error("Enter valid password");
-            }
-          }
+          navigate("../home");
         })
-        .catch((err) => {
-          toast.warning(err.message);
-        });
+        .catch((e) => toast.error("Enter Valid Credentials"));
     }
   };
+
+  useEffect(() => {
+    sessionStorage.clear();
+  }, []);
+  // useEffect(() => {
+  //   const unsubscribe = auth.onAuthStateChanged((authUser) => {
+  //     if (authUser) {
+  //       setUser(authUser);
+  //     } else {
+  //       setUser(null);
+  //     }
+  //   });
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // }, []);
   return (
     <div className="Home">
       <div className="container">
@@ -66,15 +79,15 @@ export const Login = () => {
           <Col lg={3} sm={8} xs={12}>
             <div className="login-div">
               <p className="mb-4 text-center title">Instagram</p>
-              <Form autoComplete="new-password">
-                <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form autoComplete="off">
+                <Form.Group className="mb-3">
                   <Form.Control
-                    type="email"
+                    type="search"
                     placeholder="Phone number, username or email address"
-                    value={inputs.username || ""}
+                    value={inputs.username}
                     onChange={changeEvent}
                     name="username"
-                    autoComplete="new-password"
+                    autoComplete="off"
                   />
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -84,7 +97,7 @@ export const Login = () => {
                     placeholder="Password"
                     autoComplete="new-password"
                     onChange={changeEvent}
-                    value={inputs.userpassword || ""}
+                    value={inputs.userpassword}
                   />
                 </Form.Group>
                 <div className="d-grid gap-2">

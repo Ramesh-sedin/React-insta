@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { json, useNavigate } from "react-router-dom";
-import user from "./img/user.png";
+import proPic from "./img/user.png";
 import "./home.css";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
@@ -14,9 +14,14 @@ import "firebase/compat/firestore";
 import { db, storage } from "./firebase";
 import { auth } from "./firebase";
 import { ToastContainer, toast } from "react-toastify";
+import { UserPost } from "./userPost";
+import { upload } from "./firebase";
+import { RightPane } from "./rightPane";
+import { UserStory } from "./userStory";
 
 export const Home = () => {
   const [show, setShow] = useState(false);
+  const [uploadShow, setUploadShow] = useState(false);
   const [caption, setCaption] = useState("");
   const [image, setImage] = useState("");
   const [progress, setProgress] = useState(0);
@@ -24,19 +29,26 @@ export const Home = () => {
   const [display, setDisplay] = useState([]);
   const [addComment, setAddComment] = useState("");
   const [postLink, setPostLink] = useState(false);
-  // const [profileUser, setProfileUser] = useState("");
+  const [imageID, setImageID] = useState("");
+  const [user, setUser] = useState(null);
+  const [photoURL, setPhotoURL] = useState(
+    "https://winaero.com/blog/wp-content/uploads/2015/05/windows-10-user-account-login-icon.png"
+  );
+  const [profilePicture, setProfilePicture] = useState();
 
+  const uploadhandleClose = () => setUploadShow(false);
+  const uploadhandleShow = () => setUploadShow(true);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const responsive = {
     superLargeDesktop: {
       // the naming can be any, depends on you.
       breakpoint: { max: 4000, min: 3000 },
-      items: 5,
+      items: 8,
     },
     desktop: {
       breakpoint: { max: 3000, min: 1024 },
-      items: 5,
+      items: 8,
     },
     tablet: {
       breakpoint: { max: 1024, min: 464 },
@@ -50,6 +62,18 @@ export const Home = () => {
   const navigate = useNavigate();
   const [pictures, setPictures] = useState([]);
   useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((authUser) => {
+      if (authUser) {
+        setUser(authUser);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+  useEffect(() => {
     fetch("http://localhost:2001/images")
       .then((res) => {
         return res.json();
@@ -62,25 +86,30 @@ export const Home = () => {
       });
   }, []);
 
-  const userName = sessionStorage.getItem("username");
+  // const userName = sessionStorage.getItem("username");
 
   useEffect(() => {
-    if (userName == "" || userName == null) {
-      navigate("../login");
-    }
+    // if (userName == "" || userName == null) {
+    //   navigate("../login");
+    // }
     auth.onAuthStateChanged((getDetail) => {
-      console.log(getDetail);
       setDisplay(getDetail.displayName);
     });
   }, []);
+
   useEffect(() => {
     db.collection("posts")
       .orderBy("timestamp", "desc")
       .onSnapshot((snapshot) => {
-        const data = snapshot.docs.map((doc) => doc.data());
-        setPosts(data);
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            post: doc.data(),
+          }))
+        );
       });
   }, []);
+
   const logout = () => {
     firebase
       .auth()
@@ -88,18 +117,6 @@ export const Home = () => {
       .then((ress) => {
         navigate("../login");
       });
-  };
-  const handleKeyPress = (event) => {
-    if (event.key) {
-      if (addComment == "" || addComment == null) {
-        setPostLink(false);
-      } else {
-        setPostLink(true);
-      }
-    }
-  };
-  const commentChange = (e) => {
-    setAddComment(e.target.value);
   };
   const imageUpload = (e) => {
     if (e.target.files[0]) {
@@ -130,7 +147,11 @@ export const Home = () => {
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               caption: caption,
               imageURL: url,
+<<<<<<< HEAD
               userName: userName,
+=======
+              userName: display,
+>>>>>>> post-like-comment
             });
             toast.success("Your post added successfully");
             setShow(false);
@@ -140,6 +161,28 @@ export const Home = () => {
       }
     );
   };
+
+  // profile pic upload
+  const [currentUser, setCurrentUser] = useState("");
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser) => {
+      setCurrentUser(authUser);
+    });
+    if (currentUser && currentUser.photoURL) {
+      setPhotoURL(currentUser.photoURL);
+    }
+  }, [currentUser]);
+  const propicChange = (e) => {
+    if (e.target.files[0]) {
+      setProfilePicture(e.target.files[0]);
+    }
+  };
+  const uploadPic = () => {
+    upload(profilePicture, currentUser, setLoading, uploadShow);
+    setUploadShow(false);
+  };
+  // profile pic upload
   return (
     <div>
       <ToastContainer />
@@ -199,11 +242,12 @@ export const Home = () => {
                       </a>
                     </li>
                     <li>
-                      <a href="#">
-                        <i
-                          className="fa fa-user-circle-o"
-                          aria-hidden="true"
-                        ></i>
+                      <a href="#" onClick={uploadhandleShow}>
+                        <img
+                          src={photoURL}
+                          alt=""
+                          className="profile-display-picture"
+                        />
                         Profile
                       </a>
                     </li>
@@ -215,6 +259,35 @@ export const Home = () => {
               </div>
             </div>
             <div className="col-md-7">
+              <Modal show={uploadShow} onHide={uploadhandleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Upload profile picture</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="profile-pic">
+                    <input type="file" onChange={propicChange} />
+                    <div>
+                      <br />
+                      {/* <p style={{ margin: 0 }}>Preview:</p>
+                      <img
+                        src={photoURL}
+                        alt="test"
+                        className="profile-upload-img"
+                      /> */}
+                    </div>
+                  </div>
+                </Modal.Body>
+                <Modal.Footer>
+                  <button
+                    disabled={loading || !profilePicture}
+                    href="#"
+                    className="btn btn-primary"
+                    onClick={uploadPic}
+                  >
+                    Upload
+                  </button>
+                </Modal.Footer>
+              </Modal>
               <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                   <Modal.Title>Create new post</Modal.Title>
@@ -246,187 +319,24 @@ export const Home = () => {
                   </Button>
                 </Modal.Footer>
               </Modal>
+              <UserStory />
               <div className="feed-section">
-                <Carousel
-                  className="status-slider"
-                  swipeable={false}
-                  draggable={false}
-                  showDots={false}
-                  responsive={responsive}
-                  ssr={true} // means to render carousel on server-side.
-                  infinite={true}
-                  autoPlay={false}
-                  autoPlaySpeed={3000}
-                  keyBoardControl={true}
-                  customTransition="transform 300ms ease-in-out"
-                  transitionDuration={500}
-                  slidesToSlide={3}
-                  containerClass="carousel-container"
-                  removeArrowOnDeviceType={["tablet", "mobile"]}
-                  deviceType={""}
-                  dotListClass="custom-dot-list-style"
-                  itemClass="carousel-item-padding-40-px"
-                >
-                  {pictures.map((result) => (
-                    <img
-                      src={JSON.stringify(result.thumbnailUrl).replace(
-                        /^["'](.+(?=["']$))["']$/,
-                        "$1"
-                      )}
-                    />
-                  ))}
-                </Carousel>
-
                 <div className="timeline">
-                  {posts.map((datas) => (
-                    <div className="image-frame">
-                      <div className="img-details d-flex align-items-center">
-                        <img src={user} alt="avatar" className="avatar" />
-                        <p>{display}</p>
-                      </div>
-                      <img src={datas.imageURL} />
-                      <div className="actions d-flex justify-content-between">
-                        <div>
-                          <i className="fa fa-heart-o" aria-hidden="true"></i>
-                          <i className="fa fa-comment-o" aria-hidden="true"></i>
-                          <i
-                            className="fa fa-paper-plane-o"
-                            aria-hidden="true"
-                          ></i>
-                        </div>
-                        <div>
-                          <i
-                            className="fa fa-bookmark-o"
-                            aria-hidden="true"
-                          ></i>
-                        </div>
-                      </div>
-                      <FloatingLabel
-                        controlId="floatingTextarea"
-                        label="Add a comment..."
-                        className="mt-3 comment-field"
-                      >
-                        <Form.Control
-                          type="text"
-                          placeholder="Add comment here"
-                          value={addComment}
-                          onChange={commentChange}
-                          onKeyUp={handleKeyPress}
-                        />
-                        {postLink ? (
-                          <a href="#" className="add-link">
-                            post
-                          </a>
-                        ) : null}
-                      </FloatingLabel>
-                    </div>
+                  {posts.map(({ id, post }) => (
+                    <UserPost
+                      key={id}
+                      imageURL={post.imageURL}
+                      caption={post.caption}
+                      user={user}
+                      userName={post.userName}
+                      postID={id}
+                    />
                   ))}
                 </div>
               </div>
             </div>
             <div className="col-md-3">
-              <div className="other-info">
-                <div className="my-profile">
-                  <div>
-                    <img
-                      className="profile-image"
-                      src={user}
-                      alt="user_image"
-                    />
-                  </div>
-                  <div className="profile-name">
-                    <p>Ramesh_1995</p>
-                    <span>Ramesh</span>
-                  </div>
-                  <div className="switch-acc">
-                    <a href="#">Switch</a>
-                  </div>
-                </div>
-                <div className="suggestions d-flex justify-content-between">
-                  <p>Suggestions for you</p>
-                  <a href="#">See all</a>
-                </div>
-                <div className="my-profile">
-                  <div>
-                    <img
-                      className="profile-image"
-                      src={user}
-                      alt="user_image"
-                    />
-                  </div>
-                  <div className="profile-name">
-                    <p>Indian cricket </p>
-                    <span>india</span>
-                  </div>
-                  <div className="switch-acc">
-                    <a href="#">Follow</a>
-                  </div>
-                </div>
-                <div className="my-profile">
-                  <div>
-                    <img
-                      className="profile-image"
-                      src={user}
-                      alt="user_image"
-                    />
-                  </div>
-                  <div className="profile-name">
-                    <p>Tamil Industry </p>
-                    <span>Tamil</span>
-                  </div>
-                  <div className="switch-acc">
-                    <a href="#">Follow</a>
-                  </div>
-                </div>
-                <div className="my-profile">
-                  <div>
-                    <img
-                      className="profile-image"
-                      src={user}
-                      alt="user_image"
-                    />
-                  </div>
-                  <div className="profile-name">
-                    <p>RCB </p>
-                    <span>IPL</span>
-                  </div>
-                  <div className="switch-acc">
-                    <a href="#">Follow</a>
-                  </div>
-                </div>
-              </div>
-              <div className="other-links">
-                <ul>
-                  <li>
-                    <a href="#">About</a>
-                  </li>
-                  <li>
-                    <a href="#">Help</a>
-                  </li>
-                  <li>
-                    <a href="#">Press</a>
-                  </li>
-                  <li>
-                    <a href="#">API</a>
-                  </li>
-                  <li>
-                    <a href="#">Jobs</a>
-                  </li>
-                  <li>
-                    <a href="#">Privacy</a>
-                  </li>
-                  <li>
-                    <a href="#">Terms</a>
-                  </li>
-                  <li>
-                    <a href="#">Location</a>
-                  </li>
-                  <li>
-                    <a href="#">Language</a>
-                  </li>
-                </ul>
-              </div>
-              <p className="copyrights">© 2023 INSTAGRAM FROM META</p>
+              <RightPane photoURL={photoURL} proPic={proPic} user={user} />
             </div>
           </div>
         </div>

@@ -34,6 +34,9 @@
   width: 30px;
   margin-right: 10px;
   vertical-align: initial;
+  border-radius: 40px;
+  height: 30px;
+  object-fit: cover;
 }
 .profile-name p {
   margin: 0;
@@ -160,9 +163,6 @@
   font-size: 20px;
   padding-right: 10px;
 }
-.caption {
-  padding-left: 10px;
-}
 .comment-field {
   border-bottom: 1px solid #d0d0d0;
 }
@@ -185,7 +185,9 @@
 .avatar {
   width: 30px !important;
   height: 30px !important;
-  margin-right: 20px;
+  margin-right: 10px;
+  border-radius: 30px;
+  object-fit: cover;
 }
 .add-link {
   position: absolute;
@@ -194,6 +196,86 @@
   text-decoration: none;
   font-weight: bold;
   color: #4590ff !important;
+}
+.update-link {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #4590ff !important;
+}
+.react-multi-carousel-list {
+  width: 88%;
+  margin: 20px auto;
+}
+.like-button {
+  color: #000;
+  padding-right: 8px;
+}
+.comment-actions .like-button {
+  padding: 0px !important;
+}
+.like-button:hover {
+  color: #000 !important;
+}
+.liked i {
+  color: #ff3041;
+}
+.like-details {
+  margin-bottom: 10px !important;
+}
+.comments p {
+  margin: 1px 0px;
+}
+.caption {
+  padding-bottom: 10px;
+}
+.profile-pic img {
+  width: 30px;
+}
+.profile-display-picture {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 40px;
+}
+.profile-upload-img {
+  width: 30px;
+  margin-right: 10px;
+  border-radius: 40px;
+  height: 30px;
+  object-fit: cover;
+}
+.reply a {
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #727272;
+}
+.reply-link {
+  position: absolute;
+  top: 25px;
+  right: 0;
+}
+#dropdown-basic {
+  background-color: transparent !important;
+  color: #000;
+  border: transparent;
+  position: relative;
+  top: -4px;
+  font-weight: bold;
+}
+#dropdown-basic::after {
+  display: none;
+}
+.comment-actions {
+  display: flex;
+  column-gap: 8px;
+}
+.edit-icon {
+  color: #0040ab;
 }
 @media only screen and (max-width: 1024px) {
   .sidebar,

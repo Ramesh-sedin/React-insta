@@ -147,11 +147,7 @@ export const Home = () => {
               timestamp: firebase.firestore.FieldValue.serverTimestamp(),
               caption: caption,
               imageURL: url,
-<<<<<<< HEAD
-              userName: userName,
-=======
               userName: display,
->>>>>>> post-like-comment
             });
             toast.success("Your post added successfully");
             setShow(false);

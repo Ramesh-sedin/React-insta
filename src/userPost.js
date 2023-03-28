@@ -6,16 +6,19 @@ import { auth, db } from "./firebase";
 import proPic from "./img/user.png";
 import Form from "react-bootstrap/Form";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import { Comments } from "./comments";
+import { upload } from "./firebase";
 import Dropdown from "react-bootstrap/Dropdown";
+import { CommentSection } from "./commentSection";
+import { DeletePost } from "./deletePostModal";
 export const UserPost = ({ postID, user, userName, caption, imageURL }) => {
   const [addComment, setAddComment] = useState("");
   const [postLink, setPostLink] = useState(false);
-  const [showComments, setShowComments] = useState([]);
   const [dislike, setDislike] = useState(true);
   const [likeCount, setLikeCount] = useState(0);
   const [reply, setReply] = useState("");
   const [replyPostButton, setReplyPostButton] = useState(false);
+  const [profilePicture, setProfilePicture] = useState();
+  const [uploadShow, setUploadShow] = useState(false);
 
   const postingComment = (e) => {
     e.preventDefault();
@@ -24,10 +27,16 @@ export const UserPost = ({ postID, user, userName, caption, imageURL }) => {
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
       userName: user.displayName,
     });
+    setAddComment("");
   };
   const commentChange = (e) => {
     setAddComment(e.target.value);
   };
+  useEffect(() => {
+    if (addComment === "" || addComment === null) {
+      setPostLink(false);
+    }
+  }, [addComment]);
   const handleKeyPress = (event) => {
     if (event.key) {
       if (addComment === "" || addComment === null) {
@@ -42,23 +51,6 @@ export const UserPost = ({ postID, user, userName, caption, imageURL }) => {
     setLikeCount(likeCount + (dislike ? 1 : -1));
     setDislike(!dislike);
   };
-  useEffect(() => {
-    if (postID) {
-      db.collection("posts")
-        .doc(postID)
-        .collection("comments")
-        .orderBy("timestamp", "desc")
-        .onSnapshot((snapshot) => {
-          setShowComments(
-            snapshot.docs.map((doc) => ({
-              id: doc.id,
-              comments: doc.data(),
-            }))
-          );
-          setAddComment("");
-        });
-    }
-  }, []);
 
   // Reply comment //
 
@@ -86,24 +78,7 @@ export const UserPost = ({ postID, user, userName, caption, imageURL }) => {
             <p>{userName}</p>
           </div>
           <div>
-            {user.displayName === userName && (
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  ...
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    href="#"
-                    onClick={() => {
-                      db.collection("posts").doc(postID).delete();
-                    }}
-                  >
-                    delete
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            )}
+            <DeletePost user={user} userName={userName} postID={postID} />
           </div>
         </div>
         <img src={imageURL} alt="omg" />
@@ -132,48 +107,7 @@ export const UserPost = ({ postID, user, userName, caption, imageURL }) => {
         <p className="caption">
           <b>{userName}:</b> {caption}
         </p>
-        {showComments.map(({ id, comments }) => (
-          <>
-            <div className="d-flex justify-content-between comments">
-              <p>
-                <b>{comments.userName}:</b> &nbsp;
-                {comments.text}
-              </p>
-              <div className="comment-actions">
-                <Comments />
-                {(user.displayName === userName ||
-                  comments.userName === user.displayName) && (
-                  <p>
-                    <a
-                      href="#"
-                      onClick={() => {
-                        db.collection("posts")
-                          .doc(postID)
-                          .collection("comments")
-                          .doc(id)
-                          .delete();
-                      }}
-                    >
-                      delete
-                    </a>
-                    {/* <a
-                      href="#"
-                      onClick={() => {
-                        db.collection("posts")
-                          .doc(postID)
-                          .collection("comments")
-                          .doc(id)
-                          .delete();
-                      }}
-                    >
-                      edit
-                    </a> */}
-                  </p>
-                )}
-              </div>
-            </div>
-          </>
-        ))}
+        <CommentSection postID={postID} user={user} userName={userName} />
 
         <FloatingLabel
           controlId="floatingTextarea"

@@ -197,6 +197,14 @@
   font-weight: bold;
   color: #4590ff !important;
 }
+.update-link {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #4590ff !important;
+}
 .react-multi-carousel-list {
   width: 88%;
   margin: 20px auto;
@@ -204,7 +212,9 @@
 .like-button {
   color: #000;
   padding-right: 8px;
-  margin-right: 10px;
+}
+.comment-actions .like-button {
+  padding: 0px !important;
 }
 .like-button:hover {
   color: #000 !important;
@@ -262,6 +272,10 @@
 }
 .comment-actions {
   display: flex;
+  column-gap: 8px;
+}
+.edit-icon {
+  color: #0040ab;
 }
 @media only screen and (max-width: 1024px) {
   .sidebar,

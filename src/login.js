@@ -40,9 +40,9 @@ export const Login = () => {
     }
   };
 
-  // useEffect(() => {
-  //   sessionStorage.clear();
-  // }, []);
+  useEffect(() => {
+    auth.updateCurrentUser(null);
+  }, []);
 
   return (
     <div className="Home">

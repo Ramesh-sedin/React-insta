@@ -22,7 +22,7 @@ export const UserStory = () => {
     },
   };
   useEffect(() => {
-    fetch("http://localhost:2001/images")
+    fetch("http://localhost:2002/images")
       .then((res) => {
         return res.json();
       })
@@ -55,8 +55,9 @@ export const UserStory = () => {
         dotListClass="custom-dot-list-style"
         itemClass="carousel-item-padding-40-px"
       >
-        {pictures.map((result) => (
+        {pictures.map((result, i) => (
           <img
+            key={i}
             src={JSON.stringify(result.thumbnailUrl).replace(
               /^["'](.+(?=["']$))["']$/,
               "$1"

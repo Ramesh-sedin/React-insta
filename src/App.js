@@ -11,37 +11,51 @@ import { Outlet } from "react-router-dom";
 import { Profile } from "./profile";
 import { PrivateRoute } from "./privateRoute";
 function App() {
-  const [checkUser, setCheckUser] = useState(true);
+  const [authenticated, setAuthenticated] = useState();
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
-      setCheckUser(user);
+      setAuthenticated(user);
     });
   }, []);
-  console.log("current user", checkUser);
+  console.log("current user", authenticated);
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/register" element={<Register />}></Route>
-        <Route
-          path="/home"
-          element={
-            <PrivateRoute isLogin={checkUser}>
-              <Home />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute isLogin={checkUser}>
-              <Profile />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <>
+      {authenticated ? (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/register" element={<Register />}></Route>
+            <Route path="/home" element={<Home />}></Route>
+            <Route
+              path="/home"
+              element={
+                <>
+                  <PrivateRoute isLogin={authenticated}>
+                    <Home />
+                  </PrivateRoute>
+                </>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute isLogin={authenticated}>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      ) : (
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Login />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+          </Routes>
+        </BrowserRouter>
+      )}
+    </>
   );
 }
 

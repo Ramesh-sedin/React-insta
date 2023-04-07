@@ -7,3 +7,6 @@
   color: red;
   margin: 0;
 }
+.pending {
+  visibility: hidden;
+}
